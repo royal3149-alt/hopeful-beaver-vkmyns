@@ -42,7 +42,7 @@ import {
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 
 // ==========================================
-// ★ 設定區：Firebase 鑰匙 (不更動) ★
+// ★ 設定區：Firebase 鑰匙 ★
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyCXQA8lA8_p1_ni2hb3EP85iWWHov7W6t8",
@@ -218,13 +218,13 @@ const Card = ({ children, onClick, selected, className = "" }) => (
     onClick={onClick}
     className={`relative p-6 cursor-pointer transition-all border ${
       selected
-        ? "bg-[#2a0e0e] border-[#e5d5b0] shadow-lg"
+        ? "bg-[#2a0e0e] border-[#e5d5b0]"
         : "bg-[#1a1a1a] border-[#333] hover:border-[#5c4033]"
     } ${className}`}
   >
     {children}
     {selected && (
-      <div className="absolute top-2 right-2 text-[#e5d5b0] animate-in fade-in zoom-in duration-300">
+      <div className="absolute top-2 right-2 text-[#e5d5b0] animate-in fade-in zoom-in">
         <Check size={16} />
       </div>
     )}
@@ -232,18 +232,25 @@ const Card = ({ children, onClick, selected, className = "" }) => (
 );
 
 // --- Pages ---
-
 const LandingPage = ({ onStart, onSkip, savedUser, onLogoClick }) => {
   const [showConfirm, setShowConfirm] = useState(false);
-  const handleSkipClick = () => (savedUser ? onSkip() : setShowConfirm(true));
+
+  // 智慧跳過
+  const handleSkipClick = () => {
+    if (savedUser) {
+      onSkip();
+    } else {
+      setShowConfirm(true);
+    }
+  };
 
   return (
     <div className="h-full flex flex-col items-center justify-center text-center px-6 animate-fade-in relative z-10">
       <div
-        className="mb-12 relative group cursor-pointer flex flex-col items-center"
+        className="mb-12 flex flex-col items-center cursor-default"
         onClick={onLogoClick}
       >
-        <div className="w-[1px] h-24 bg-gradient-to-b from-transparent via-[#4a0404] to-[#4a0404] mx-auto mb-6 group-hover:h-28 group-hover:bg-[#e5d5b0] transition-all duration-700 ease-in-out"></div>
+        <div className="w-[1px] h-20 bg-[#4a0404] mb-6"></div>
         {savedUser ? (
           <div>
             <p className="text-[#8a6a57] text-xs tracking-widest mb-2 font-serif uppercase">
@@ -255,7 +262,7 @@ const LandingPage = ({ onStart, onSkip, savedUser, onLogoClick }) => {
           </div>
         ) : (
           <div>
-            <h1 className="text-4xl md:text-6xl font-serif text-[#e5d5b0] tracking-widest mb-3 uppercase font-bold">
+            <h1 className="text-4xl md:text-6xl font-serif text-[#e5d5b0] tracking-widest mb-3 uppercase">
               三拾酒館
             </h1>
             <p className="text-[#8a6a57] font-serif italic text-sm tracking-[0.3em] uppercase">
@@ -264,7 +271,7 @@ const LandingPage = ({ onStart, onSkip, savedUser, onLogoClick }) => {
           </div>
         )}
       </div>
-      <p className="text-[#a89f91] text-sm max-w-sm mb-12 leading-loose opacity-80 h-16 font-serif">
+      <p className="text-[#a89f91] text-sm max-w-sm mb-12 leading-loose opacity-80 h-16">
         {savedUser ? (
           <>
             旅人，歡迎回來。
@@ -303,7 +310,7 @@ const LandingPage = ({ onStart, onSkip, savedUser, onLogoClick }) => {
               <span className="text-white font-bold border-b border-[#4a0404]">
                 「Thirty Talk」
               </span>{" "}
-              遊戲的機會。
+              遊戲的機會。我們將無法為您調製專屬風味。
             </p>
             <div className="flex flex-col gap-3">
               <Button onClick={onStart}>返回測驗 (推薦)</Button>
@@ -312,7 +319,7 @@ const LandingPage = ({ onStart, onSkip, savedUser, onLogoClick }) => {
                   setShowConfirm(false);
                   onSkip();
                 }}
-                className="text-zinc-600 text-xs py-2 hover:text-white transition-colors font-serif"
+                className="text-zinc-600 text-xs py-2 hover:text-white transition-colors"
               >
                 沒關係，忍痛放棄
               </button>
@@ -343,14 +350,17 @@ const QuizPage = ({ onAnswerComplete, currentAnswers }) => {
   return (
     <div className="h-full flex flex-col max-w-2xl mx-auto px-6 pt-12 pb-6 relative z-10">
       <div className="flex-1">
-        <div className="flex justify-between items-end mb-8 border-b border-[#333] pb-4 text-zinc-500">
+        <div className="flex justify-between items-end mb-8 border-b border-[#333] pb-4">
           <div>
             <span className="text-[#4a0404] font-bold text-xl">
               0{qIndex + 1}
             </span>
-            <span className="text-sm"> / 0{VIBE_QUESTIONS.length}</span>
+            <span className="text-[#555] text-sm">
+              {" "}
+              / 0{VIBE_QUESTIONS.length}
+            </span>
           </div>
-          <span className="text-xs tracking-widest uppercase font-mono">
+          <span className="text-[#555] text-xs tracking-widest uppercase font-mono tracking-[0.2em]">
             Soul Archive
           </span>
         </div>
@@ -380,7 +390,7 @@ const QuizPage = ({ onAnswerComplete, currentAnswers }) => {
                       className={`w-5 h-5 rounded-full ${opt.color} opacity-70`}
                     ></div>
                   )}
-                  <div className="text-left font-serif text-zinc-200">
+                  <div className="text-left font-serif">
                     {opt.label}
                     <p className="text-[#666] text-xs mt-1">{opt.desc}</p>
                   </div>
@@ -396,10 +406,10 @@ const QuizPage = ({ onAnswerComplete, currentAnswers }) => {
 
 const TeaserPage = ({ onNext }) => (
   <div className="h-full flex flex-col items-center justify-center text-center px-6 animate-fade-in bg-[#0a0a0a] relative z-10">
-    <div className="border border-[#e5d5b0] p-1 mb-10 rounded-sm">
-      <div className="border border-[#e5d5b0] px-10 py-16 md:px-16 md:py-24 bg-[#1a1a1a] shadow-inner">
+    <div className="border border-[#e5d5b0] p-1 mb-10">
+      <div className="border border-[#e5d5b0] px-10 py-16 md:px-16 md:py-24 bg-[#1a1a1a]">
         <Wine className="mx-auto text-[#4a0404] mb-8" size={40} />
-        <h2 className="text-3xl font-serif text-[#e5d5b0] mb-6 tracking-widest uppercase font-bold">
+        <h2 className="text-3xl font-serif text-[#e5d5b0] mb-6 tracking-widest uppercase">
           Thirty Talk
         </h2>
         <div className="w-12 h-[1px] bg-[#5c4033] mx-auto mb-8"></div>
@@ -412,7 +422,7 @@ const TeaserPage = ({ onNext }) => (
           這不僅是一杯酒，而是一場交換靈魂故事的深度對談。
           <br />
           <br />
-          <span className="text-[#e5d5b0] italic font-medium tracking-wide text-base drop-shadow-md">
+          <span className="text-[#e5d5b0] italic font-medium tracking-wide text-base">
             Let our stories intertwine.
           </span>
         </p>
@@ -459,7 +469,7 @@ const BookingPage = ({ onSubmit, availability, isSubmitting, savedUser }) => {
               ))
             ) : (
               <div className="text-zinc-600 text-xs italic text-center col-span-3">
-                暫未開放日期
+                暫未開放日期 (請老闆去後台設定)
               </div>
             )}
           </div>
@@ -471,8 +481,8 @@ const BookingPage = ({ onSubmit, availability, isSubmitting, savedUser }) => {
                     onClick={() => setData({ ...data, time: t })}
                     className={`py-2 text-xs border transition-all ${
                       data.time === t
-                        ? "bg-[#4a0404] text-[#e5d5b0] border-[#4a0404] font-bold"
-                        : "border-[#333] text-[#666] hover:border-zinc-500"
+                        ? "bg-[#4a0404] text-[#e5d5b0] border-[#4a0404]"
+                        : "border-[#333] text-[#666]"
                     }`}
                   >
                     {t}
@@ -485,13 +495,13 @@ const BookingPage = ({ onSubmit, availability, isSubmitting, savedUser }) => {
                 )}
           </div>
           <div>
-            <label className="text-[#8a6a57] text-[10px] block mb-2 uppercase tracking-widest font-bold font-serif">
+            <label className="text-[#8a6a57] text-[10px] block mb-2 uppercase tracking-widest font-bold">
               Guests
             </label>
             <input
               type="number"
               value={data.guests}
-              className="w-full bg-black border border-[#333] text-[#e5d5b0] p-3 outline-none focus:border-[#4a0404] font-serif"
+              className="w-full bg-black border border-[#333] text-white p-3 outline-none focus:border-[#4a0404]"
               onChange={(e) => setData({ ...data, guests: e.target.value })}
             />
           </div>
@@ -504,18 +514,18 @@ const BookingPage = ({ onSubmit, availability, isSubmitting, savedUser }) => {
             <input
               placeholder="Your Name"
               value={data.name}
-              className="w-full bg-transparent border-b border-[#333] py-3 text-[#e5d5b0] outline-none focus:border-[#4a0404] font-serif placeholder-zinc-700"
+              className="w-full bg-transparent border-b border-[#333] py-3 text-white outline-none focus:border-[#4a0404] font-serif placeholder-zinc-700"
               onChange={(e) => setData({ ...data, name: e.target.value })}
             />
             <input
-              placeholder="IG / Line ID"
+              placeholder="IG / Line ID / Phone"
               value={data.contact}
-              className="w-full bg-transparent border-b border-[#333] py-3 text-[#e5d5b0] outline-none focus:border-[#4a0404] font-serif placeholder-zinc-700"
+              className="w-full bg-transparent border-b border-[#333] py-3 text-white outline-none focus:border-[#4a0404] font-serif placeholder-zinc-700"
               onChange={(e) => setData({ ...data, contact: e.target.value })}
             />
             <textarea
               placeholder="Whispers..."
-              className="w-full bg-black/40 border border-[#333] p-4 text-[#e5d5b0] h-24 mt-4 outline-none focus:border-[#4a0404] font-serif placeholder-zinc-700 resize-none"
+              className="w-full bg-black/40 border border-[#333] p-4 text-white h-24 mt-4 outline-none focus:border-[#4a0404] font-serif placeholder-zinc-700 resize-none"
               onChange={(e) => setData({ ...data, note: e.target.value })}
             />
           </div>
@@ -538,70 +548,95 @@ const BookingPage = ({ onSubmit, availability, isSubmitting, savedUser }) => {
   );
 };
 
-// ★ SuccessPage：靈魂卡片視覺大優化 ★
 const SuccessPage = ({ data, quizResult, onReplay, onHome }) => {
   const IG_URL =
     "https://www.instagram.com/30_speakeasy?igsh=MTRrZGZnbHBxbG42bw%3D%3D&utm_source=qr";
 
-  const PERSONA_DATA = {
-    bar: {
-      zh: "話題領航員",
-      en: "THE NAVIGATOR",
-      quote: "你掌握著夜晚的航向，與調酒師的對話是你探索未知的羅盤。",
-      kw: "#連結 #探索",
-      img: "https://i.ibb.co/zWm6BGxT/IMG-5301.jpg",
-    },
-    lounge: {
-      zh: "微醺引力點",
-      en: "THE MAGNET",
-      quote: "你就是夜晚的引力中心，吸引著頻率相同的靈魂。",
-      kw: "#交流 #吸引",
-      img: "https://i.ibb.co/S4tNyR2d/IMG-5303.jpg",
-    },
-    table: {
-      zh: "城市漫遊者",
-      en: "THE DRIFTER",
-      quote: "不被座位束縛，你的雷達隨時開啟，準備在人海中捕捉訊號。",
-      kw: "#流動 #觀察",
-      img: "https://i.ibb.co/0yNSCz9p/IMG-5300.jpg",
-    },
-    anywhere: {
-      zh: "頻率共振者",
-      en: "THE RESONATOR",
-      quote: "座位只是形式。只要音樂對了，整個空間都是你的主場。",
-      kw: "#直覺 #氛圍",
-      img: "https://i.ibb.co/5XZnpVbs/IMG-5299.jpg",
-    },
-    default: {
-      zh: "神秘旅人",
-      en: "THE MYSTERY",
-      quote: "你保留了靈魂的秘密，準備在今晚親自揭曉。",
-      kw: "#未知 #期待",
-      img: "https://i.ibb.co/JW22yLfJ/IMG-5297.jpg",
-    },
+  // 強制 Fallback，確保有卡片
+  let persona = {
+    zh: "神秘旅人",
+    en: "THE MYSTERY",
+    quote: "你保留了靈魂的秘密，準備在今晚親自揭曉。",
+    kw: "#未知 #期待",
+    img: "https://i.ibb.co/JW22yLfJ/IMG-5297.jpg",
   };
 
-  const resultSeat = quizResult?.seat || "default";
-  const persona = PERSONA_DATA[resultSeat] || PERSONA_DATA["default"];
+  if (quizResult && quizResult.seat) {
+    if (quizResult.seat === "bar")
+      persona = {
+        zh: "話題領航員",
+        en: "THE NAVIGATOR",
+        quote: "你掌握著夜晚的航向，與調酒師的對話是你探索未知的羅盤。",
+        kw: "#連結 #探索",
+        img: "https://i.ibb.co/zWm6BGxT/IMG-5301.jpg",
+      };
+    else if (quizResult.seat === "lounge")
+      persona = {
+        zh: "微醺引力點",
+        en: "THE MAGNET",
+        quote: "你就是夜晚的引力中心，吸引著頻率相同的靈魂。",
+        kw: "#交流 #吸引",
+        img: "https://i.ibb.co/S4tNyR2d/IMG-5303.jpg",
+      };
+    else if (quizResult.seat === "table")
+      persona = {
+        zh: "城市漫遊者",
+        en: "THE DRIFTER",
+        quote: "不被座位束縛，你的雷達隨時開啟，準備在人海中捕捉訊號。",
+        kw: "#流動 #觀察",
+        img: "https://i.ibb.co/0yNSCz9p/IMG-5300.jpg",
+      };
+    else if (quizResult.seat === "anywhere")
+      persona = {
+        zh: "頻率共振者",
+        en: "THE RESONATOR",
+        quote: "座位只是形式。只要音樂對了，整個空間都是你的主場。",
+        kw: "#直覺 #氛圍",
+        img: "https://i.ibb.co/5XZnpVbs/IMG-5299.jpg",
+      };
+  }
 
-  const downloadICSFile = () => {
-    const start = new Date(`${data.date}T${data.time}`)
-      .toISOString()
-      .replace(/-|:|\.\d\d\d/g, "");
-    const end = new Date(
-      new Date(`${data.date}T${data.time}`).getTime() + 7200000
-    )
-      .toISOString()
-      .replace(/-|:|\.\d\d\d/g, "");
-    const blob = new Blob(
-      [
-        `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:${start}\nDTEND:${end}\nSUMMARY:三拾酒館 訂位\nLOCATION:三拾酒館 Thirty Speakeasy\nEND:VEVENT\nEND:VCALENDAR`,
-      ],
-      { type: "text/calendar;charset=utf-8" }
-    );
+  // ★ 修正：更穩定的 Apple Calendar 連結生成方式 ★
+  const handleAppleCalendar = () => {
+    // 產生符合 iCal 格式的字串 (YYYYMMDDTHHmm00)
+    const formatTime = (d, t) =>
+      d.replace(/-/g, "") + "T" + t.replace(/:/g, "") + "00";
+
+    // 計算結束時間 (預設 2 小時)
+    const startDateObj = new Date(`${data.date}T${data.time}`);
+    const endDateObj = new Date(startDateObj.getTime() + 7200000);
+
+    // 取得結束時間字串
+    const endYear = endDateObj.getFullYear();
+    const endMonth = String(endDateObj.getMonth() + 1).padStart(2, "0");
+    const endDay = String(endDateObj.getDate()).padStart(2, "0");
+    const endHour = String(endDateObj.getHours()).padStart(2, "0");
+    const endMin = String(endDateObj.getMinutes()).padStart(2, "0");
+
+    const startStr = formatTime(data.date, data.time);
+    const endStr = `${endYear}${endMonth}${endDay}T${endHour}${endMin}00`;
+
+    const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Thirty Speakeasy//Booking//EN
+BEGIN:VEVENT
+UID:${Date.now()}@thirtybistro.com
+DTSTAMP:${startStr}Z
+DTSTART:${startStr}
+DTEND:${endStr}
+SUMMARY:三拾酒館 訂位
+DESCRIPTION:預約人: ${data.name} / 人數: ${data.guests}人
+LOCATION:三拾酒館 Thirty Speakeasy
+END:VEVENT
+END:VCALENDAR`;
+
+    // 建立 Blob 並觸發下載
+    const blob = new Blob([icsContent], {
+      type: "text/calendar;charset=utf-8",
+    });
     const link = document.createElement("a");
     link.href = window.URL.createObjectURL(blob);
-    link.download = "thirty_booking.ics";
+    link.setAttribute("download", "thirty_booking.ics");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -609,64 +644,59 @@ const SuccessPage = ({ data, quizResult, onReplay, onHome }) => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start overflow-y-auto no-scrollbar pb-20 bg-black relative z-20">
-      {/* 雜誌排版視覺區 */}
-      <div className="w-full relative flex flex-col items-center justify-start bg-[#0a0a0a]">
+      {/* 視覺卡片：長圖海報模式 */}
+      <div className="w-full relative flex flex-col items-center justify-start shadow-2xl bg-[#0a0a0a]">
         <div className="w-full relative">
           <img
             src={persona.img}
             className="w-full h-auto object-cover block"
             alt="Persona Poster"
           />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60"></div>
 
-          {/* 上方漸層：輔助閱讀標題 */}
-          <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/60 to-transparent"></div>
-
-          {/* 下方漸層：輔助閱讀語錄 */}
-          <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
-
-          {/* ★ 頂部內容：合併稱號 + 極致留白 ★ */}
-          <div className="absolute inset-x-0 top-0 p-10 pt-16 text-center flex flex-col items-center z-30">
-            <div className="bg-black/30 backdrop-blur-sm border border-white/10 px-6 py-4 rounded-2xl shadow-2xl">
-              <p className="text-[9px] text-[#a89f91] font-bold tracking-[0.5em] uppercase mb-2">
-                {persona.kw}
-              </p>
-              <h2 className="text-3xl md:text-4xl font-serif text-white tracking-[0.1em] flex items-center gap-3">
-                <span className="font-bold">{persona.zh}</span>
-                <span className="w-[1px] h-6 bg-white/20"></span>
-                <span className="text-sm font-mono text-white/70 italic uppercase tracking-widest">
-                  {persona.en}
-                </span>
-              </h2>
-            </div>
-          </div>
-
-          {/* ★ 底部內容：將語錄壓縮在下方 ★ */}
+          {/* 文字內容集中於下方 */}
           <div className="absolute inset-x-0 bottom-0 p-8 text-center flex flex-col items-center z-30">
-            <p className="text-[#e5d5b0] font-serif italic text-sm leading-relaxed mb-4 px-6 py-3 bg-black/40 backdrop-blur-sm rounded-xl border border-white/5 max-w-xs shadow-lg">
+            <p className="text-[10px] text-[#a89f91] font-bold tracking-[0.6em] uppercase mb-4 bg-black/60 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10">
+              {persona.kw}
+            </p>
+            <h2 className="text-4xl font-serif text-white tracking-[0.2em] mb-4 bg-black/70 backdrop-blur-md py-3 px-8 rounded-2xl border border-white/5 shadow-2xl uppercase font-bold">
+              {persona.zh}
+            </h2>
+            <div className="w-16 h-[1px] bg-[#5c4033] mb-4"></div>
+            <p className="text-[11px] text-white font-bold tracking-[0.4em] font-mono bg-[#4a0404]/90 px-6 py-2 rounded-full border border-white/10 shadow-lg mb-6 uppercase">
+              {persona.en}
+            </p>
+            <p className="text-[#e5d5b0] font-serif italic text-sm leading-relaxed mb-12 px-6 py-4 bg-black/80 backdrop-blur-md rounded-2xl border border-white/10 shadow-xl max-w-xs">
               "{persona.quote}"
             </p>
-          </div>
 
-          {/* ★ IG 連結按鈕 (右下角精緻圓型) ★ */}
-          <div className="absolute bottom-6 right-6 z-40">
-            <a
-              href={IG_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center justify-center w-12 h-12 bg-white/10 backdrop-blur-xl rounded-full border border-white/20 shadow-2xl hover:bg-white transition-all active:scale-90"
-            >
-              <Instagram
-                size={20}
-                className="text-white group-hover:text-black transition-colors"
-                strokeWidth={1.5}
-              />
-            </a>
+            {/* IG 連結按鈕 (右下角) */}
+            <div className="absolute bottom-6 right-6 z-40">
+              <a
+                href={IG_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-3 bg-white/10 backdrop-blur-2xl px-4 py-2 rounded-full border border-white/20 shadow-2xl hover:bg-white/20 active:scale-95 transition-all"
+              >
+                <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center shadow-lg group-hover:bg-[#4a0404] group-hover:text-white transition-colors">
+                  <Instagram size={18} strokeWidth={2} />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-[9px] text-white/70 font-mono tracking-wider">
+                    @30_speakeasy
+                  </span>
+                  <span className="text-[8px] text-[#e5d5b0] font-bold uppercase tracking-widest">
+                    Follow Us
+                  </span>
+                </div>
+              </a>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 資訊卡片 */}
-      <div className="w-full max-w-sm px-6 mt-10 space-y-4">
+      {/* 資訊與按鈕區 */}
+      <div className="w-full max-w-sm px-6 mt-8 space-y-4">
         <div className="bg-[#111] p-8 border border-[#222] rounded-[32px] text-sm shadow-xl relative group">
           <div className="absolute top-0 right-0 w-24 h-24 bg-[#4a0404]/5 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-all duration-1000"></div>
           <div className="flex justify-between border-b border-white/5 pb-4 mb-4 text-zinc-500 uppercase tracking-widest text-[10px] relative z-10">
@@ -696,7 +726,7 @@ const SuccessPage = ({ data, quizResult, onReplay, onHome }) => {
             <CalendarPlus size={14} /> Google
           </a>
           <button
-            onClick={downloadICSFile}
+            onClick={handleAppleCalendar}
             className="bg-zinc-900 border border-zinc-800 hover:border-white text-zinc-500 hover:text-white py-4 rounded-2xl flex items-center justify-center gap-2 text-[11px] transition-all uppercase tracking-widest font-bold"
           >
             <Calendar size={14} /> Apple/iCal
@@ -706,14 +736,14 @@ const SuccessPage = ({ data, quizResult, onReplay, onHome }) => {
         <div className="flex gap-3">
           <button
             onClick={onReplay}
-            className="flex-1 py-4 text-zinc-600 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-700 rounded-2xl flex items-center justify-center gap-2 text-[10px] transition-colors uppercase tracking-[0.2em] font-serif font-bold"
+            className="flex-1 py-4 text-zinc-600 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-700 rounded-2xl flex items-center justify-center gap-2 text-[10px] transition-colors uppercase tracking-[0.2em] font-serif"
           >
             <RotateCcw size={12} /> Replay
           </button>
           <Button
             onClick={onHome}
             variant="outline"
-            className="flex-[2] py-4 text-[11px] tracking-[0.2em] rounded-2xl font-bold"
+            className="flex-[2] py-4 text-[11px] tracking-[0.2em] rounded-2xl"
           >
             Back to Entrance
           </Button>
@@ -799,8 +829,8 @@ const AdminPanel = ({
 
   return (
     <div className="h-full bg-black flex flex-col relative z-20">
-      <div className="flex justify-between items-center px-6 py-6 border-b border-[#222] bg-black shrink-0 font-serif">
-        <h2 className="text-[#e5d5b0] font-bold uppercase tracking-widest">
+      <div className="flex justify-between items-center px-6 py-6 border-b border-[#222] bg-black shrink-0">
+        <h2 className="text-[#e5d5b0] font-serif uppercase tracking-widest font-bold">
           Thirty Console
         </h2>
         <div className="flex gap-2">
@@ -878,7 +908,7 @@ const AdminPanel = ({
         ) : (
           <div className="space-y-6">
             <div className="sticky top-0 z-10 bg-black/95 backdrop-blur py-4 border-b border-[#333] -mt-2 mb-4">
-              <div className="flex gap-4 items-center px-2">
+              <div className="flex gap-4 items-center">
                 <input
                   type="date"
                   className="bg-[#111] border border-[#333] text-[#e5d5b0] p-3 rounded-xl outline-none flex-1 text-sm font-serif"
@@ -964,21 +994,11 @@ export default function App() {
   const [savedUser, setSavedUser] = useState(null);
   const isEmailJSReady = useRef(false);
 
-  const handleAdminTrigger = () => {
-    setLogoClicks((prev) => {
-      const next = prev + 1;
-      if (next >= 5) {
-        setStep("admin");
-        return 0;
-      }
-      return next;
-    });
-  };
-
   useEffect(() => {
     const data = localStorage.getItem("thirty_user_info");
     if (data) setSavedUser(JSON.parse(data));
 
+    // 動態載入 EmailJS
     const script = document.createElement("script");
     script.src =
       "https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js";
@@ -991,6 +1011,7 @@ export default function App() {
     };
     document.head.appendChild(script);
 
+    // 動態載入 Tailwind
     const twScript = document.createElement("script");
     twScript.src = "https://cdn.tailwindcss.com";
     document.head.appendChild(twScript);
@@ -1042,22 +1063,31 @@ export default function App() {
         collection(db, "artifacts", appId, "public", "data", "thirty_bookings"),
         { ...data, quizResult: quizAns, createdAt: new Date().toISOString() }
       );
+
+      // 使用 window.emailjs 發送郵件
       if (isEmailJSReady.current && window.emailjs) {
         try {
           await window.emailjs.send(
             emailConfig.serviceID,
             emailConfig.templateID,
-            { ...data, vibe_result: Object.values(quizAns).join(", ") }
+            {
+              name: data.name,
+              contact: data.contact,
+              date: data.date,
+              time: data.time,
+              note: data.note || "無",
+            }
           );
         } catch (err) {
-          console.warn(err);
+          console.warn("Email Send Failed:", err);
         }
       }
+
       setBookData(data);
       setStep("success");
     } catch (e) {
       console.error(e);
-      alert("預約失敗，請檢查網路。");
+      alert("預約失敗，請檢查網路連接。");
     } finally {
       setIsSubmitting(false);
     }
@@ -1091,20 +1121,29 @@ export default function App() {
   return (
     <div className="w-full h-screen bg-black text-[#dcdcdc] font-serif overflow-hidden relative selection:bg-[#4a0404]">
       <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/black-linen.png')] opacity-20 pointer-events-none"></div>
+      <div
+        className="absolute top-0 left-0 w-20 h-20 z-[100]"
+        onClick={() =>
+          logoClicks + 1 >= 5
+            ? (setStep("admin"), setLogoClicks(0))
+            : setLogoClicks((v) => v + 1)
+        }
+      ></div>
 
       <div className="relative z-10 w-full h-full no-scrollbar overflow-y-auto">
         {step === "landing" && (
           <LandingPage
-            onStart={() => {
-              setQuizAns({});
-              setStep("quiz");
-            }}
+            onStart={() => setStep("quiz")}
             onSkip={() => {
               setQuizAns({ seat: "default" });
               setStep("booking");
             }}
             savedUser={savedUser}
-            onLogoClick={handleAdminTrigger}
+            onLogoClick={() =>
+              logoClicks + 1 >= 5
+                ? (setStep("admin"), setLogoClicks(0))
+                : setLogoClicks((v) => v + 1)
+            }
           />
         )}
         {step === "quiz" && (
